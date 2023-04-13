@@ -1,13 +1,15 @@
 <?php get_header();?>
+
 <?php
 /**
-* Template Name:Author Page
+* Template Name: Contact
 *
 * @package WordPress
 */
-?>
 
-<?php 
+// Define human verification answer
+$human_verification_answer = 11;
+
 // Check if form has been submitted
 if ( isset( $_POST['contact_submit'] ) ) {
 
@@ -15,6 +17,7 @@ if ( isset( $_POST['contact_submit'] ) ) {
   $name = sanitize_text_field( $_POST['contact_name'] );
   $email = sanitize_email( $_POST['contact_email'] );
   $message = esc_textarea( $_POST['contact_message'] );
+  $human_verification = intval( $_POST['human_verification'] );
 
   // Validate form fields
   $errors = array();
@@ -29,6 +32,11 @@ if ( isset( $_POST['contact_submit'] ) ) {
 
   if ( empty( $message ) ) {
     $errors[] = 'Please enter a message';
+  }
+
+  // Validate human verification answer
+  if ( $human_verification !== $human_verification_answer ) {
+    $errors[] = 'Please answer the human verification question correctly';
   }
 
   // If there are no errors, send the email
@@ -104,6 +112,13 @@ if ( isset( $_POST['contact_submit'] ) ) {
     text-align: center;
     margin-top: 20px;
   }
+  .human-verification {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+  
 </style>
 
 <form id="contact-form" method="post" action="<?php echo esc_url( get_permalink() ); ?>">
@@ -121,6 +136,11 @@ if ( isset( $_POST['contact_submit'] ) ) {
     <label for="contact_message">Message:</label>
     <textarea name="contact_message" id="contact_message" rows="5" required></textarea>
   </div>
+
+  <div class="form-group human-verification">
+  <label for="human_verification">What is 10+1?</label>
+  <input type="number" name="human_verification" id="human_verification" required>
+</div>
 
   <div class="form-group">
     <button type="submit" name="contact_submit">Send Message</button>
