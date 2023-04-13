@@ -306,34 +306,3 @@ function wp_enqueue_woocommerce_style(){
 }
 add_action( 'wp_enqueue_scripts', 'wp_enqueue_woocommerce_style' );
 
-//contact form
-
-add_action( 'wp_ajax_nopriv_submit_contact_form', 'submit_contact_form' );
-add_action( 'wp_ajax_submit_contact_form', 'submit_contact_form' );
-
-function submit_contact_form() {
-    $to = get_option( 'albinsadiku99@gmail.com' );
-    $subject = 'New Contact Form Submission';
-    $name = sanitize_text_field( $_POST['name'] );
-    $email = sanitize_email( $_POST['email'] );
-    $message = esc_textarea( $_POST['message'] );
-    $headers = array(
-        "From: $name <$email>",
-        "Reply-To: $name <$email>",
-        "Content-Type: text/html; charset=UTF-8"
-    );
-    $body = "Name: $name <br>Email: $email <br>Message: $message";
-
-    if ( wp_mail( $to, $subject, $body, $headers ) ) {
-        wp_send_json_success( 'Thank you for contacting us. We will get back to you as soon as possible.' );
-    } else {
-        wp_send_json_error( 'There was an error sending your message. Please try again later.' );
-    }
-    wp_die();
-}
-
-add_action( 'wp_enqueue_scripts', 'my_enqueue_scripts' );
-function my_enqueue_scripts() {
-    wp_enqueue_script( 'my-ajax-script', get_template_directory_uri() . '/js/my-ajax-script.js', array( 'jquery' ) );
-    wp_localize_script( 'my-ajax-script', 'my_ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
-}
